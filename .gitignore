@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0 OR BSD-2-Clause OR GPL-3.0-or-later
 
-# Created by https://www.toptal.com/developers/gitignore/api/macos,swift
-# Edit at https://www.toptal.com/developers/gitignore?templates=macos,swift
+# Created by https://www.toptal.com/developers/gitignore/api/macos,swift,vim,zsh
+# Edit at https://www.toptal.com/developers/gitignore?templates=macos,swift,vim,zsh
 
 ### macOS ###
 # General
@@ -45,6 +45,23 @@ Temporary Items
 
 ## User settings
 xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+
+## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
 
 ## Obj-C/Swift specific
 *.hmap
@@ -105,9 +122,70 @@ fastlane/test_output
 
 iOSInjectionProject/
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,swift
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg  # comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
 
-build/
-bin/
-devel/
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+### Zsh ###
+# Zsh compiled script + zrecompile backup
+*.zwc
+*.zwc.old
+
+# Zsh completion-optimization dumpfile
+*zcompdump*
+
+# Zsh history
+.zsh_history
+
+# Zsh sessions
+.zsh_sessions
+
+# Zsh zcalc history
+.zcalc_history
+
+# A popular plugin manager's files
+._zinit
+.zinit_lstupd
+
+# zdharma/zshelldoc tool's files
+zsdoc/data
+
+# robbyrussell/oh-my-zsh/plugins/per-directory-history plugin's files
+# (when set-up to store the history in the local directory)
+.directory_history
+
+# MichaelAquilina/zsh-autoswitch-virtualenv plugin's files
+# (for Zsh plugins using Python)
+.venv
+
+# Zunit tests' output
+/tests/_output/*
+!/tests/_output/.gitkeep
+
+# End of https://www.toptal.com/developers/gitignore/api/macos,swift,vim,zsh
+
+# Ignore directories only at the root level
+/build/
+/bin/
+/devel/
+/.local/
+
+# Ignore files at any level
 *.o
