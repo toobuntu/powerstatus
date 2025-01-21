@@ -19,26 +19,70 @@ Check the current power source type (Battery or AC/UPS).
 
 ## Install
 
+You can either download a precompiled binary or compile it yourself.
+
+### Download
+
+The precompiled binary is a universal build, compatible with both Intel and Apple Silicon Macs. To download it, run:
+
+```sh
+curl --fail --silent --show-error --location --output-dir bin --create-dirs --remote-name --url "https://github.com/toobuntu/powerstatus/releases/latest/download/powerstatus"
+
+# It’s not signed or notarized, so remove any potential runtime issues
+if xattr -p com.apple.quarantine bin/powerstatus 2>/dev/null; then
+  xattr -d com.apple.quarantine bin/powerstatus
+fi
+```
+
+<!--
+  Note: For more details on running software that hasn’t been signed or notarized, see Apple’s [Gatekeeper documentation](https://support.apple.com/en-us/102445#openanyway).
+-->
+
+Install to your `PATH` (e.g., `/usr/local/bin`):
+
+```sh
+# Install to your PATH for global access
+sudo install -m 0755 bin/powerstatus /usr/local/bin/
+
+# Run it from anywhere
+powerstatus --help
+```
+
+Or, run it directly from the `bin` directory:
+
+```sh
+# Make it executable
+chmod +x bin/powerstatus
+
+# Run directly from the bin directory
+./bin/powerstatus --help
+```
+
 ### Compile
 
-To compile `powerstatus` yourself, first clone the repository, ensure you have the Xcode Command Line Tools installed, and then run:
+If you’d rather compile the binary yourself, first clone this repository and ensure the Xcode Command Line Tools are installed. Then run:
 
 ```sh
 mkdir bin
 xcrun swiftc -Osize -o bin/powerstatus src/powerstatus.swift
 ```
 
-After compiling, move the `powerstatus` binary to a directory in your `PATH` (e.g., `/usr/local/bin`) for convenient access:
+And that’s it! You’re all set to use `powerstatus`. There’s no need to code sign or notarize software for it to run on the machine where it was compiled.
+
+Once compiled, you can either run it directly from the `bin` directory or install it to a directory in your `PATH` and run it from anywhere:
 
 ```sh
-sudo mv bin/powerstatus /usr/local/bin/
-```
+# Run directly from the bin directory
+./bin/powerstatus --help
 
-And that’s it! You’re all set to use `powerstatus`.
+# Or, install to a directory in your PATH (e.g., /usr/local/bin)
+sudo install -m 0755 bin/powerstatus /usr/local/bin/
+powerstatus --help
+```
 
 ### Build dependencies
 
-To make sure you have the necessary tools for compiling, install Xcode Command Line Tools with the following command:
+The Swift compiler is provided by Xcode Command Line Tools, which you can install with:
 
 ```sh
 xcode-select --install
