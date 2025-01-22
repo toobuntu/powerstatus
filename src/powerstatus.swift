@@ -57,6 +57,13 @@ enum PowerSourceError: Error {
     case unknownOption(String) // For unknown options
 }
 
+// Define the ParsedArguments struct
+struct ParsedArguments {
+    let verbose: Bool
+    let debug: Bool
+    let additionalArgs: [String]
+}
+
 // Helper function for printing messages
 func printMessage(_ message: String, toStderr: Bool) {
     let outputStream = toStderr ? stderr : stdout
@@ -94,6 +101,20 @@ func assignPowerSourceTypeCode(verbose _: Bool, debug: Bool) throws -> Int32 {
 }
 
 func printUsage() {
+    let exitCodes = [
+        (exitCodeBattery, "Device is running on battery."),
+        (exitCodeAC, "Device is plugged into AC."),
+        (exitCodeUPS, "Device is plugged into UPS."),
+        (exitCodeUnknownOption, "Unknown option provided."),
+        (exitCodeUsage, "Usage message shown."),
+        (exitCodeFailedRetrieve, "Failed to retrieve power sources."),
+        (exitCodeFailedType, "Failed to get power source type."),
+        (exitCodeUnrecognized, "Unknown power source type."),
+        (exitCodeUnexpected, "Unexpected error.")
+    ]
+
+    let formattedExitCodes = exitCodes.map { String(format: " %2d: %@", $0.0, $0.1) }.joined(separator: "\n")
+
     let usageMessage = """
     Usage: powerstatus [options]
 
@@ -105,39 +126,44 @@ func printUsage() {
       -h, --help         Show this help message
 
     Exit Codes:
-     \(exitCodeBattery): Device is running on battery.
-     \(exitCodeAC): Device is plugged into AC.
-     \(exitCodeUPS): Device is plugged into UPS.
-    \(exitCodeUnknownOption): Unknown option provided.
-    \(exitCodeUsage): Usage message shown.
-    \(exitCodeFailedRetrieve): Failed to retrieve power sources.
-    \(exitCodeFailedType): Failed to get power source type.
-    \(exitCodeUnrecognized): Unknown power source type.
-    \(exitCodeUnexpected): Unexpected error.
+    \(formattedExitCodes)
     """
     printMessage(usageMessage, toStderr: true)
 }
 
 // Parse command-line arguments
-func parseArguments() throws -> (verbose: Bool, debug: Bool) {
+func parseArguments() throws -> ParsedArguments {
     var verbose = false
     var debug = false
+    var additionalArgs: [String] = []
+    var parsingOptions = true
 
     for arg in CommandLine.arguments.dropFirst() {
+        if parsingOptions {
         switch arg {
-        case "-v", "--verbose":
-            verbose = true
-        case "--debug":
-            debug = true
-        case "-h", "--help":
-            printUsage()
-            exit(exitCodeUsage) // Exit after printing usage message
-        default:
-            throw PowerSourceError.unknownOption(arg)
+            case "--":
+                parsingOptions = false
+            case "-v", "--verbose":
+                verbose = true
+            case "--debug":
+                debug = true
+            case "-h", "--help":
+                printUsage()
+                exit(exitCodeUsage) // Exit after printing usage message
+            default:
+                if arg.hasPrefix("-") {
+                    throw PowerSourceError.unknownOption(arg)
+                } else {
+                    parsingOptions = false
+                    additionalArgs.append(arg)
+                }
+            }
+        } else {
+            additionalArgs.append(arg)
         }
     }
 
-    return (verbose, debug)
+    return ParsedArguments(verbose: verbose, debug: debug, additionalArgs: additionalArgs)
 }
 
 func handleVerboseOutput(for powerSourceTypeCode: Int32) {
@@ -175,7 +201,9 @@ func processPowerSourceInfo(verbose: Bool, debug: Bool) throws -> Int32 {
 
 func main() {
     do {
-        let (verbose, debug) = try parseArguments()
+        let parsedArguments = try parseArguments()
+        let verbose = parsedArguments.verbose
+        let debug = parsedArguments.debug
 
         // Process power source information
         let powerSourceTypeCode = try processPowerSourceInfo(verbose: verbose, debug: debug)
