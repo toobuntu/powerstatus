@@ -104,6 +104,16 @@ Exit Codes:
  2: Device is plugged into UPS.
 ```
 
+## Compatibility
+
+This command-line utility supports macOS 13 (Ventura) and later. Note that testing on macOS versions earlier than 13 is no longer feasible as GitHub runners only support macOS 13 and later.
+
+The program relies on the `IOKit` framework, specifically using `IOPSCopyPowerSourcesInfo` and `IOPSGetProvidingPowerSourceType` functions. These functions have been available since macOS 10.0. However, considering modern Swift features and compiling requirements, the minimum macOS version that can be targeted is macOS 10.12 (Sierra).
+
+For detailed build instructions on older macOS versions, refer to the [BUILD.md](./docs/BUILD.md) file.
+
+For debugging instructions, refer to the [DEBUGGING.md](./docs/DEBUGGING.md) file.
+
 ## If You Want To Thank Me
 
 - You can star ⭐️ this project on GitHub
