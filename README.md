@@ -60,23 +60,42 @@ chmod +x bin/powerstatus
 
 ### Compile
 
-If you’d rather compile the binary yourself, first clone this repository and ensure the Xcode Command Line Tools are installed. Then run:
+If you’d rather compile the binary yourself, first clone this repository and ensure the Xcode Command Line Tools are installed. Then run the provided build script:
 
 ```sh
-mkdir bin
-xcrun swiftc -Osize -o bin/powerstatus src/powerstatus.swift
+ksh ./scripts/build.sh
 ```
+
+This script will build `powerstatus.swift` twice:
+
+- Per architecture with debug symbols included.
+- As a stripped universal binary for distribution.
+
+After running the script, you will find the distribution build in the `./build/dist/` directory and the universal binary in the `./bin/` directory.
 
 And that’s it! You’re all set to use `powerstatus`. There’s no need to code sign or notarize software for it to run on the machine where it was compiled.
 
 Once compiled, you can either run it directly from the `bin` directory or install it to a directory in your `PATH` and run it from anywhere:
 
 ```sh
-# Run directly from the bin directory
+# Run the universal binary directly from the bin directory
 ./bin/powerstatus --help
 
-# Or, install to a directory in your PATH (e.g., /usr/local/bin)
-sudo install -m 0755 bin/powerstatus /usr/local/bin/
+# Or, run a per-architecture build from the dist directory
+./build/dist/powerstatus_arm64 --help
+```
+
+Or, install it to a directory in your PATH (e.g., /usr/local/bin) to run it from anywhere:
+
+```sh
+# Install the universal binary
+sudo install -m 0755 ./bin/powerstatus /usr/local/bin/
+
+# Install a per-architecture build and rename it during installation
+# For Intel Macs, replace arm64 with x86_64
+sudo install -m 0755 ./build/dist/powerstatus_arm64 /usr/local/bin/powerstatus
+
+# Now you can run it from anywhere
 powerstatus --help
 ```
 
@@ -110,7 +129,7 @@ This command-line utility supports macOS 13 (Ventura) and later. Note that testi
 
 The program relies on the `IOKit` framework, specifically using `IOPSCopyPowerSourcesInfo` and `IOPSGetProvidingPowerSourceType` functions. These functions have been available since macOS 10.0. However, considering modern Swift features and compiling requirements, the minimum macOS version that can be targeted is macOS 10.12 (Sierra).
 
-For detailed build instructions on older macOS versions, refer to the [BUILD.md](./docs/BUILD.md) file.
+For detailed build instructions on older macOS versions, refer to the [BUILD_LEGACY_MACOS.md](./docs/BUILD_LEGACY_MACOS.md) file.
 
 For debugging instructions, refer to the [DEBUGGING.md](./docs/DEBUGGING.md) file.
 
