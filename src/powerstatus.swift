@@ -28,7 +28,7 @@
  */
 
 import Foundation
-import IOKit.ps
+import IOKit.ps // IOPowerSources
 
 // Constants for exit codes
 // exit() expects Int32
