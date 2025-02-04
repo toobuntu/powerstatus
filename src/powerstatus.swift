@@ -110,7 +110,7 @@ func printUsage() {
         (exitCodeFailedRetrieve, "Failed to retrieve power sources."),
         (exitCodeFailedType, "Failed to get power source type."),
         (exitCodeUnrecognized, "Unknown power source type."),
-        (exitCodeUnexpected, "Unexpected error.")
+        (exitCodeUnexpected, "Unexpected error."),
     ]
 
     let formattedExitCodes = exitCodes.map { String(format: " %2d: %@", $0.0, $0.1) }.joined(separator: "\n")
@@ -140,7 +140,7 @@ func parseArguments() throws -> ParsedArguments {
 
     for arg in CommandLine.arguments.dropFirst() {
         if parsingOptions {
-        switch arg {
+            switch arg {
             case "--":
                 parsingOptions = false
             case "-v", "--verbose":
